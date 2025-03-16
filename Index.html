@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iqra University GPA Calculator</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .logo {
+            display: block;
+            margin: 0 auto 20px auto;
+            width: 250px; /* Increased logo size */
+            height: auto;
+        }
+        h2 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #333;
+            margin-top: 20px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            margin-bottom: 20px;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .table {
+            margin-top: 20px;
+        }
+        .table th, .table td {
+            text-align: center;
+        }
+        .modal-header {
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 10px 10px 0 0;
+        }
+        .modal-title {
+            font-weight: bold;
+        }
+        .modal-body {
+            padding: 20px;
+        }
+        .form-group label {
+            font-weight: bold;
+            color: #333;
+        }
+        #gpa {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #28a745;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Iqra University Logo -->
+        <img src="https://iqra.edu.pk/wp-content/uploads/2024/03/LOGO-IU-01.png" alt="Iqra University Logo" class="logo">
+        
+        <h2>Iqra University GPA Calculator</h2>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCourseModal">
+            Add Course
+        </button>
+        <div class="modal fade" id="addCourseModal" tabindex="-1" role="dialog" aria-labelledby="addCourseModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCourseModalLabel">Add Course</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="courseName">Course Name</label>
+                                <input type="text" class="form-control" id="courseName" placeholder="Enter course name">
+                            </div>
+                            <div class="form-group">
+                                <label for="grade">Grade</label>
+                                <select class="form-control" id="grade">
+                                    <option value="A">A (88-100)</option>
+                                    <option value="B+">B+ (81-87)</option>
+                                    <option value="B">B (74-80)</option>
+                                    <option value="C+">C+ (67-73)</option>
+                                    <option value="C">C (60-66)</option>
+                                    <option value="F">F (Below 60)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="credits">Credits</label>
+                                <input type="number" class="form-control" id="credits" placeholder="Enter credits">
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="addCourse()">Add</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h3>Courses:</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Course Name</th>
+                    <th>Grade</th>
+                    <th>Credits</th>
+                </tr>
+            </thead>
+            <tbody id="courses">
+            </tbody>
+        </table>
+        <button type="button" class="btn btn-primary" onclick="calculateGPA()">Calculate GPA</button>
+        <p id="gpa"></p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+        let courses = [];
+
+        function addCourse() {
+            const courseName = document.getElementById('courseName').value;
+            const grade = document.getElementById('grade').value;
+            const credits = document.getElementById('credits').value;
+            courses.push({ courseName, grade, credits });
+            const course = document.createElement('tr');
+            course.innerHTML = `
+                <td>${courseName}</td>
+                <td>${grade}</td>
+                <td>${credits}</td>
+            `;
+            document.getElementById('courses').appendChild(course);
+            document.getElementById('courseName').value = '';
+            document.getElementById('grade').value = 'A';
+            document.getElementById('credits').value = '';
+            $('#addCourseModal').modal('hide');
+        }
+
+        function calculateGPA() {
+            let totalPoints = 0;
+            let totalCredits = 0;
+            for (let course of courses) {
+                let points = 0;
+                switch (course.grade) {
+                    case 'A':
+                        points = 4;
+                        break;
+                    case 'B+':
+                        points = 3.3;
+                        break;
+                    case 'B':
+                        points = 3;
+                        break;
+                    case 'C+':
+                        points = 2.3;
+                        break;
+                    case 'C':
+                        points = 2;
+                        break;
+                    case 'F':
+                        points = 0;
+                        break;
+                }
+                totalPoints += points * Number(course.credits);
+                totalCredits += Number(course.credits);
+            }
+            if (totalCredits === 0) {
+                document.getElementById('gpa').innerHTML = 'No courses added';
+            } else {
+                const gpa = totalPoints / totalCredits;
+                document.getElementById('gpa').innerHTML = `Your GPA: ${gpa.toFixed(2)}`;
+            }
+        }
+    </script>
+</body>
+</html>
